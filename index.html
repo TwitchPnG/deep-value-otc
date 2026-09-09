@@ -36,31 +36,6 @@
             font-size: 14px;
             margin-bottom: 30px;
         }
-        .tabs {
-            display: flex;
-            gap: 0;
-            margin-bottom: 25px;
-            background: #1a1a1a;
-            border-radius: 8px;
-            padding: 4px;
-        }
-        .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 6px;
-            color: #888;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        .tab.active {
-            background: #f7931a;
-            color: #000;
-        }
-        .form-content { display: none; }
-        .form-content.active { display: block; }
         .input-group { margin-bottom: 18px; }
         label {
             display: block;
@@ -106,7 +81,6 @@
             display: none;
         }
         .error { background: rgba(244, 67, 54, 0.1); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3); }
-        .success { background: rgba(76, 175, 80, 0.1); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.3); }
         .footer {
             text-align: center;
             margin-top: 25px;
@@ -120,83 +94,36 @@
         <div class="logo">Deep<span>Value</span></div>
         <div class="subtitle">OTC Desk Portal</div>
         
-        <div class="tabs">
-            <div class="tab active" data-tab="login">SIGN IN</div>
-            <div class="tab" data-tab="register">CREATE ACCOUNT</div>
-        </div>
-        
-        <div id="login-form" class="form-content active">
-            <form id="loginForm">
-                <div class="input-group">
-                    <label>Username</label>
-                    <input type="text" id="loginUsername" placeholder="Enter username" required>
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter password" required>
-                </div>
-                <button type="submit">ACCESS PORTAL</button>
-            </form>
-        </div>
-        
-        <div id="register-form" class="form-content">
-            <form id="registerForm">
-                <div class="input-group">
-                    <label>Username</label>
-                    <input type="text" id="registerUsername" placeholder="Choose username" required>
-                </div>
-                <div class="input-group">
-                    <label>Password</label>
-                    <input type="password" id="registerPassword" placeholder="Create password" required>
-                </div>
-                <div class="input-group">
-                    <label>Confirm Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Confirm password" required>
-                </div>
-                <button type="submit">CREATE ACCOUNT</button>
-            </form>
-        </div>
+        <form id="loginForm">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" placeholder="Enter username" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter password" required>
+            </div>
+            <button type="submit">ACCESS PORTAL</button>
+        </form>
         
         <div class="msg error" id="errorMsg"></div>
-        <div class="msg success" id="successMsg"></div>
         
         <div class="footer">Secure bitcoin native mandem since 2016</div>
     </div>
 
     <script>
-        const API_URL = 'https://deep-value-otc.onrender.com';
-
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab, .form-content').forEach(el => el.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`${tab.dataset.tab}-form`).classList.add('active');
-                hideMsgs();
-            });
-        });
-
-        function hideMsgs() {
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('successMsg').style.display = 'none';
-        }
+        const API_URL = 'https://your-render-app.onrender.com';
 
         function showError(msg) {
             const el = document.getElementById('errorMsg');
             el.textContent = msg;
             el.style.display = 'block';
-            document.getElementById('successMsg').style.display = 'none';
-        }
-
-        function showSuccess(msg) {
-            const el = document.getElementById('successMsg');
-            el.textContent = msg;
-            el.style.display = 'block';
-            document.getElementById('errorMsg').style.display = 'none';
         }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            hideMsgs();
+            document.getElementById('errorMsg').style.display = 'none';
+            
             const res = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -206,36 +133,12 @@
                 }),
                 credentials: 'include'
             });
+            
             const data = await res.json();
             if (data.success) {
                 window.location.href = `${API_URL}/dashboard`;
             } else {
                 showError(data.error || 'Login failed');
-            }
-        });
-
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideMsgs();
-            const pw = document.getElementById('registerPassword').value;
-            const cpw = document.getElementById('confirmPassword').value;
-            if (pw !== cpw) return showError('Passwords do not match');
-            
-            const res = await fetch(`${API_URL}/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: document.getElementById('registerUsername').value,
-                    password: pw
-                })
-            });
-            const data = await res.json();
-            if (data.success) {
-                showSuccess('Account created! You can now sign in.');
-                document.getElementById('registerForm').reset();
-                setTimeout(() => document.querySelector('[data-tab="login"]').click(), 1500);
-            } else {
-                showError(data.error || 'Registration failed');
             }
         });
     </script>
