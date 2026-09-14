@@ -44,7 +44,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'deep-value-otc-secret-2026',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true, sameSite: 'none' }
+  cookie: { secure: false, sameSite: 'lax' }
 }));
 
 const users = [{ username: 'deepvalue', password: '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqQzBZN0UfGNEK8xWwPzGJ.XSZn9G' }];
