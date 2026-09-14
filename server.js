@@ -35,16 +35,28 @@ async function initDb() {
   }
 }
 
-// Serve frontend files
 app.use(express.static(__dirname));
 
-app.use(cors({ origin: true, credentials: true }));
+app.set('trust proxy', 1);
+
+app.use(cors({
+  origin: 'https://deep-value-otc.onrender.com',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(session({
   secret: process.env.SESSION_SECRET || 'deep-value-otc-secret-2026',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, sameSite: 'lax' }
+  cookie: {
+    secure: false,
+    sameSite: 'lax',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 const users = [{ username: 'deepvalue', password: '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqQzBZN0UfGNEK8xWwPzGJ.XSZn9G' }];
@@ -104,7 +116,6 @@ app.put('/api/clients', auth, async (req, res) => {
   res.json({ success: true });
 });
 
-// Serve index.html for root path
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
