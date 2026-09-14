@@ -36,7 +36,6 @@ async function initDb() {
 }
 
 app.use(express.static(__dirname));
-
 app.set('trust proxy', 1);
 
 app.use(cors({
@@ -59,7 +58,7 @@ app.use(session({
   }
 }));
 
-const users = [{ username: 'deepvalue', password: '$2a$10$N9qo8uLOickgx2ZMRZoMy.MqrqQzBZN0UfGNEK8xWwPzGJ.XSZn9G' }];
+const users = [{ username: 'deepvalue', password: '$2a$10$ZTizfAIuzTfYaNmy3nYFZu9LPwCOV1P0cw4GYM8I6mt3q6bfFK4.u' }];
 
 function auth(req, res, next) {
   if (!req.session.userId) return res.status(401).json({ error: 'Unauthorized' });
